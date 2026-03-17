@@ -1,7 +1,7 @@
 {
-  "name": "mod-5-review-frontend",
+  "name": "frontend",
   "private": true,
-  "version": "1.0.0",
+  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,6 +9,6 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "vite": "^6.0.1"
+    "vite": "^5.1.4"
   }
 }

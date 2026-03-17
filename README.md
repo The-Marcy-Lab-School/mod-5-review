@@ -5,22 +5,19 @@ A full-stack review app: **JavaScript Vite frontend** + **Express server** using
 ## Quick Start
 
 ```bash
-# Install dependencies (root + frontend)
-npm install
+# Install dependencies (server + frontend)
+cd server && npm install && cd ..
 cd frontend && npm install && cd ..
 
-# Run backend and frontend together
+# Run the server (serves API + frontend static files)
+cd server && npm run dev
+# or from repo root:
 npm run dev
 ```
 
-- **Frontend:** http://localhost:5173  
-- **API:** http://localhost:3000/api/games  
+Open **http://localhost:8080** in the browser. The server serves both the API and the frontend.
 
-Or run only the server and test with curl:
-
-```bash
-npm run server
-```
+To test the API with curl, use `http://localhost:8080/api/games` (see Part 7 below).
 
 ---
 
@@ -140,12 +137,12 @@ Example error: `res.status(404).json({ message: "Game not found" })`.
 
 ## Part 7 — Testing the API with curl
 
-Run the server (`npm run server`), then use these commands to test the API. Expect the status codes and responses below.
+Run the server (`npm run dev` from repo root or `npm run dev` from `server/`), then use these commands to test the API. Expect the status codes and responses below.
 
 **1. POST create** — expect **201** and the created game:
 
 ```bash
-curl -X POST http://localhost:3000/api/games \
+curl -X POST http://localhost:8080/api/games \
   -H "Content-Type: application/json" \
   -d '{"name": "Monopoly"}'
 ```
@@ -153,33 +150,33 @@ curl -X POST http://localhost:3000/api/games \
 **2. GET all games** — expect **200** and `{ "games": [...] }`:
 
 ```bash
-curl http://localhost:3000/api/games
+curl http://localhost:8080/api/games
 ```
 
 **3. GET invalid id → 404** — expect **404** and `{ "message": "Game not found" }`:
 
 ```bash
-curl http://localhost:3000/api/games/99999
+curl http://localhost:8080/api/games/99999
 ```
 
 **4. PATCH update** — replace `1` with a real game id; expect **200** and updated game:
 
 ```bash
-curl -X PATCH http://localhost:3000/api/games/1 \
+curl -X PATCH http://localhost:8080/api/games/1 \
   -H "Content-Type: application/json" \
   -d '{"name": "New Name"}'
 ```
 
-**5. DELETE game** — replace `1` with a real game id; expect **200** and `{ "message": "Game deleted" }`:
+**5. DELETE game** — replace `1` with a real game id; expect **204** No Content:
 
 ```bash
-curl -X DELETE http://localhost:3000/api/games/1
+curl -X DELETE http://localhost:8080/api/games/1
 ```
 
 **6. Confirm deletion** — list games again; the deleted one should be gone:
 
 ```bash
-curl http://localhost:3000/api/games
+curl http://localhost:8080/api/games
 ```
 
 ---
@@ -234,18 +231,20 @@ Build routes for:
 ```
 mod-5-review/
 ├── server/
-│   ├── server.js           # Express app, middleware order, mount routes
+│   ├── index.js              # Express app, middleware, endpoints
+│   ├── package.json
 │   ├── models/
-│   │   └── gameModel.js    # Data + logic (no req/res)
-│   ├── controllers/
-│   │   └── gamesController.js  # req → model → res
-│   └── routes/
-│       └── gamesRoutes.js     # method + path → controller
-├── frontend/               # Vite app (View)
+│   │   └── gameModel.js      # Data + logic (no req/res)
+│   └── controllers/
+│       └── gameControllers.js # req → model → res
+├── frontend/                 # Vite app (View)
 │   ├── index.html
-│   ├── vite.config.js     # proxy /api to Express
+│   ├── package.json
+│   ├── vite.config.js        # proxy /api to port 8080
 │   └── src/
 │       ├── main.js
+│       ├── fetch-helpers.js
+│       ├── dom-helpers.js
 │       └── style.css
 ├── package.json
 └── README.md
@@ -253,8 +252,7 @@ mod-5-review/
 
 ## Scripts
 
-- `npm run server` — Run Express on port 3000.  
-- `npm run frontend` — Run Vite dev server on port 5173 (proxies `/api` to 3000).  
-- `npm run dev` — Run both concurrently.  
-- `npm run build` — Build frontend to `frontend/dist`.  
-- `npm run start` — Build frontend, then run server (serves API + static app).
+- **From repo root:** `npm run dev` — Run server (nodemon) on port 8080; serves API + frontend.
+- **From repo root:** `npm run start` — Run server (node) on port 8080.
+- **From server:** `npm run dev` — Run with nodemon; `npm start` — Run with node.
+- **From frontend:** `npm run dev` — Vite dev server (proxies `/api` to 8080); `npm run build` — Build to `dist` (for production with `NODE_ENV=production`).

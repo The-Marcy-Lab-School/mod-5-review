@@ -4,16 +4,8 @@
   "description": "Checkpoint 5.1 Review: Backend Fundamentals — HTTP, Express, MVC, REST",
   "private": true,
   "scripts": {
-    "server": "node server/server.js",
-    "frontend": "cd frontend && npm run dev",
-    "build": "cd frontend && npm run build",
-    "dev": "concurrently \"npm run server\" \"npm run frontend\"",
-    "start": "npm run build && node server/server.js"
-  },
-  "dependencies": {
-    "express": "^4.21.0"
-  },
-  "devDependencies": {
-    "concurrently": "^9.0.1"
+    "dev": "cd server && npm run dev",
+    "start": "cd server && npm start",
+    "build": "cd frontend && npm run build"
   }
 }

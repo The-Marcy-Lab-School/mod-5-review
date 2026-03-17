@@ -1,78 +1,44 @@
-/**
- * MODEL — Data storage and logic only.
- * Models should NOT use req or res.
- * They accept plain data and return plain data.
- */
+let id = 1;
+const getId = () => id++;
 
-let games = [
-  { id: 1, name: "Chess" },
-  { id: 2, name: "Checkers" },
-  { id: 3, name: "Go" },
+// Restrict access to our mock "database" to just this Model file
+const games = [
+  { name: 'Chess', id: getId() },
+  { name: 'Checkers', id: getId() },
+  { name: 'Go', id: getId() },
 ];
 
-let nextId = 4;
+// Can be used like "gameModel.create()"
+module.exports.create = (name) => {
+  const newGame = { name, id: getId() };
+  games.push(newGame);
+  return { ...newGame };
+};
 
-/**
- * Get all games.
- * @returns {Array} All games
- */
-function findAll() {
+module.exports.list = () => {
   return [...games];
-}
+};
 
-/**
- * Find a game by ID in the array.
- * @param {number} id - Game ID
- * @returns {Object|undefined} Game or undefined if not found
- */
-function findById(id) {
-  const numericId = Number(id);
-  if (Number.isNaN(numericId)) return undefined;
-  return games.find((g) => g.id === numericId);
-}
+module.exports.find = (id) => {
+  const game = games.find((g) => g.id === id);
+  if (!game) {
+    return null;
+  }
+  return { ...game };
+};
 
-/**
- * Create a new game.
- * @param {Object} data - { name: string }
- * @returns {Object} Created game with id
- */
-function create(data) {
-  const name = data?.name?.trim();
-  if (!name) return null;
-  const game = { id: nextId++, name };
-  games.push(game);
-  return game;
-}
-
-/**
- * Update a game by ID.
- * @param {number} id - Game ID
- * @param {Object} data - { name?: string }
- * @returns {Object|null} Updated game or null if not found
- */
-function updateById(id, data) {
-  const game = findById(id);
+module.exports.update = (id, gameName) => {
+  const game = games.find((g) => g.id === id);
   if (!game) return null;
-  if (data.name !== undefined) game.name = String(data.name).trim() || game.name;
-  return game;
-}
+  game.name = gameName;
+  return { ...game };
+};
 
-/**
- * Delete a game by ID.
- * @param {number} id - Game ID
- * @returns {boolean} True if deleted, false if not found
- */
-function deleteById(id) {
-  const index = games.findIndex((g) => g.id === Number(id));
-  if (index === -1) return false;
-  games.splice(index, 1);
+module.exports.destroy = (id) => {
+  const gameIndex = games.findIndex((g) => g.id === id);
+  if (gameIndex < 0) {
+    return false;
+  }
+  games.splice(gameIndex, 1);
   return true;
-}
-
-module.exports = {
-  findAll,
-  findById,
-  create,
-  updateById,
-  deleteById,
 };

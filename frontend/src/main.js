@@ -1,123 +1,62 @@
-/**
- * VIEW (Frontend) — Uses fetch() to talk to the API (Express server).
- * Request → Server → Model → Response JSON
- */
+import { getGames, createGame, updateGame, deleteGame } from './fetch-helpers.js';
+import { renderGames, renderError } from './dom-helpers.js';
 
-const API_BASE = "/api/games";
+const loadGames = async () => {
+  const { data, error } = await getGames();
+  if (error) return renderError(error.message);
+  renderError();
+  renderGames(data.games);
+};
 
-async function loadGames() {
-  const res = await fetch(API_BASE);
-  if (!res.ok) throw new Error("Failed to load games");
-  const data = await res.json();
-  return data.games;
-}
+// Handle Form Submissions
+const handleAddGame = async (e) => {
+  e.preventDefault();
+  const input = document.querySelector('#game-name-input');
+  const name = input.value.trim();
+  if (!name) return;
 
-async function createGame(name) {
-  const res = await fetch(API_BASE, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name }),
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || "Failed to create game");
+  const { error } = await createGame(name);
+  if (error) return renderError(error.message);
+
+  input.value = '';
+  await loadGames();
+};
+
+// Handle Delete, Edit, and Save Clicks
+const handleGamesListClick = async (e) => {
+  const clickedListItem = e.target.closest('li');
+  if (!clickedListItem) return;
+
+  const id = clickedListItem.dataset.id;
+
+  // Handle Delete Clicks
+  if (e.target.classList.contains('delete-btn')) {
+    const { error } = await deleteGame(id);
+    if (error) return renderError(error.message);
+    await loadGames();
   }
-  return res.json();
-}
 
-async function updateGame(id, name) {
-  const res = await fetch(`${API_BASE}/${id}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name }),
-  });
-  if (!res.ok) throw new Error("Failed to update game");
-  return res.json();
-}
+  // Handle Edit/Save Button Clicks
+  if (e.target.classList.contains('edit-btn')) {
+    const nameSpan = clickedListItem.querySelector('span');
+    const editInput = clickedListItem.querySelector('input');
+    const editBtn = clickedListItem.querySelector('.edit-btn');
 
-async function deleteGame(id) {
-  const res = await fetch(`${API_BASE}/${id}`, { method: "DELETE" });
-  if (!res.ok) throw new Error("Failed to delete game");
-}
-
-function renderGames(games) {
-  const list = document.getElementById("game-list");
-  list.innerHTML = games
-    .map(
-      (g) => `
-    <li class="game-item" data-id="${g.id}">
-      <span class="game-name">${escapeHtml(g.name)}</span>
-      <div class="game-actions">
-        <button class="btn-edit" data-id="${g.id}">Edit</button>
-        <button class="btn-delete" data-id="${g.id}">Delete</button>
-      </div>
-    </li>`
-    )
-    .join("");
-}
-
-function escapeHtml(text) {
-  const div = document.createElement("div");
-  div.textContent = text;
-  return div.innerHTML;
-}
-
-function bindEvents() {
-  const form = document.getElementById("game-form");
-  const list = document.getElementById("game-list");
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const input = document.getElementById("game-name");
-    const name = input.value.trim();
-    if (!name) return;
-    try {
-      await createGame(name);
-      input.value = "";
-      refreshGames();
-    } catch (err) {
-      alert(err.message);
+    if (editBtn.textContent === 'Edit') {
+      nameSpan.classList.add('hidden');
+      editInput.classList.remove('hidden');
+      editBtn.textContent = 'Save';
+    } else {
+      const { error } = await updateGame(id, editInput.value.trim());
+      if (error) return renderError(error.message);
+      await loadGames();
     }
-  });
-
-  list.addEventListener("click", async (e) => {
-    const id = e.target.dataset?.id;
-    if (!id) return;
-    if (e.target.classList.contains("btn-delete")) {
-      if (!confirm("Delete this game?")) return;
-      try {
-        await deleteGame(id);
-        refreshGames();
-      } catch (err) {
-        alert(err.message);
-      }
-    } else if (e.target.classList.contains("btn-edit")) {
-      const item = e.target.closest(".game-item");
-      const nameEl = item.querySelector(".game-name");
-      const newName = prompt("New name:", nameEl.textContent);
-      if (newName == null || !newName.trim()) return;
-      try {
-        await updateGame(id, newName.trim());
-        refreshGames();
-      } catch (err) {
-        alert(err.message);
-      }
-    }
-  });
-}
-
-async function refreshGames() {
-  try {
-    const games = await loadGames();
-    renderGames(games);
-    document.getElementById("error").textContent = "";
-  } catch (err) {
-    document.getElementById("error").textContent = err.message;
-    document.getElementById("game-list").innerHTML = "";
   }
-}
+};
 
-document.addEventListener("DOMContentLoaded", () => {
-  bindEvents();
-  refreshGames();
-});
+// Add Event Listeners
+document.querySelector('#add-game-form').addEventListener('submit', handleAddGame);
+document.querySelector('#games-list').addEventListener('click', handleGamesListClick);
+
+// Load Games on Page Load
+loadGames();

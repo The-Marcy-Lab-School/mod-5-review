@@ -1,11 +1,12 @@
-import { defineConfig } from "vite";
+import { defineConfig } from 'vite';
+
+const SERVER_PORT = 8080;
 
 export default defineConfig({
   server: {
-    port: 5173,
     proxy: {
-      "/api": {
-        target: "http://localhost:3000",
+      '/api': {
+        target: `http://localhost:${SERVER_PORT}`,
         changeOrigin: true,
       },
     },

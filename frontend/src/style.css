@@ -1,115 +1,127 @@
-* {
-  box-sizing: border-box;
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  font-family: "Segoe UI", system-ui, sans-serif;
-  max-width: 520px;
-  margin: 2rem auto;
-  padding: 0 1rem;
-  background: #1a1b26;
-  color: #c0caf5;
+  margin: 0;
+  display: flex;
+  min-width: 320px;
   min-height: 100vh;
 }
 
+main {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
 h1 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #7aa2f7;
+  font-size: 2em;
   margin-bottom: 0.25rem;
 }
 
 .subtitle {
   font-size: 0.875rem;
-  color: #565f89;
-  margin-bottom: 1.5rem;
+  opacity: 0.8;
+  margin-bottom: 1rem;
 }
 
-#game-form {
+form {
   display: flex;
   gap: 0.5rem;
   margin-bottom: 1.5rem;
 }
 
-#game-name {
+input[type="text"] {
   flex: 1;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid #3b4261;
-  border-radius: 6px;
-  background: #24283b;
-  color: #c0caf5;
+  padding: 0.4rem 0.6rem;
   font-size: 1rem;
-}
-
-#game-name:focus {
-  outline: none;
-  border-color: #7aa2f7;
+  border-radius: 4px;
+  border: 1px solid #555;
+  background: #333;
+  color: inherit;
 }
 
 button {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.875rem;
+  padding: 0.4rem 0.8rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  border: 1px solid #555;
+  background: #444;
+  color: inherit;
   cursor: pointer;
-  font-weight: 500;
 }
 
-.btn-add {
-  background: #7aa2f7;
-  color: #1a1b26;
+button:hover {
+  background: #555;
 }
 
-.btn-add:hover {
-  background: #89b4fa;
-}
-
-.btn-edit {
-  background: #414868;
-  color: #c0caf5;
-}
-
-.btn-edit:hover {
-  background: #565f89;
-}
-
-.btn-delete {
-  background: #f7768e;
-  color: #1a1b26;
-}
-
-.btn-delete:hover {
-  background: #ff9eaf;
-}
-
-#game-list {
+ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.game-item {
+li {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0.75rem;
-  background: #24283b;
-  border-radius: 6px;
-  margin-bottom: 0.5rem;
-  border: 1px solid #3b4261;
-}
-
-.game-name {
-  font-weight: 500;
-}
-
-.game-actions {
-  display: flex;
   gap: 0.5rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #333;
+}
+
+li span {
+  flex: 1;
+}
+
+li input {
+  flex: 1;
 }
 
 #error {
-  color: #f7768e;
-  font-size: 0.875rem;
-  margin-top: 0.5rem;
+  color: #ff6b6b;
+  border: 1px solid #ff6b6b;
+  padding: 0.5rem;
+  border-radius: 4px;
+  margin-top: 1rem;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+
+  input[type="text"] {
+    background: #f5f5f5;
+    border-color: #ccc;
+  }
+
+  button {
+    background: #f0f0f0;
+    border-color: #ccc;
+  }
+
+  button:hover {
+    background: #e0e0e0;
+  }
+
+  li {
+    border-bottom-color: #ddd;
+  }
 }

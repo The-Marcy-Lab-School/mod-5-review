@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkpoint 5.1 Review — Games API</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <h1>Checkpoint 5.1 Review — Games API</h1>
+      <p class="subtitle">Client (browser) → fetch() → Server (Express) → Model → JSON response</p>
+      <form id="game-form">
+        <input type="text" id="game-name" placeholder="Game name" required />
+        <button type="submit" class="btn-add">Add Game</button>
+      </form>
+      <ul id="game-list"></ul>
+      <p id="error"></p>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
